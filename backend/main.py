@@ -1,15 +1,17 @@
 from fastapi import FastAPI
+from backend.database import engine
 
-app = FastAPI(title="Abanos API", version="0.1.0")
+app = FastAPI()
 
 @app.get("/")
 def home():
-    return {"message": "Abanos API is running"}
+    return {"status": "OK", "project": "Abanos"}
 
-@app.get("/health")
-def health():
-    return {
-        "status": "OK",
-        "project": "Abanos",
-        "version": "0.1.0"
-    }
+@app.get("/db-check")
+def db_check():
+    try:
+        conn = engine.connect()
+        conn.close()
+        return {"database": "connected successfully"}
+    except Exception as e:
+        return {"database": "failed", "error": str(e)}
